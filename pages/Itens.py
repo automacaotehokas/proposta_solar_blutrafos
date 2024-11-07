@@ -341,7 +341,11 @@ def garantir_valores_inicializados():
 # Garantir que os valores dos percentuais estão inicializados
 garantir_valores_inicializados()
 
-st.session_state['contribuinte'] = st.radio("O cliente é contribuinte do ICMS?", options=["Não","Sim"],value=st.session_state['contribuinte'])
+st.session_state['contribuinte'] = st.radio(
+    "O cliente é contribuinte do ICMS?",
+    options=["Não", "Sim"],
+    index=["Não", "Sim"].index(st.session_state.get('contribuinte', 'Não'))  # Obtém o índice do valor atual, com "Não" como padrão
+)
 
 st.session_state['outputcontribuinte'] = "cliente contribuinte do ICMS" if st.session_state['contribuinte'] == "Sim" else "cliente não contribuinte do ICMS"
 
