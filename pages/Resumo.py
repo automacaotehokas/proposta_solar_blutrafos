@@ -12,7 +12,6 @@ from sharepoint_code import SharePoint  # Certifique-se de ter este módulo
 from replace import inserir_tabelas_word 
 from replace import inserir_eventos_pagamento
 from replace import inserir_impostos
-import locale
 import pandas as pd
   
 
@@ -195,9 +194,6 @@ def pagina_gerar_documento():
 
     # Mostrando os itens configurados
     st.subheader("Itens Configurados")
-    # Configurar o locale para o formato de moeda brasileiro
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-
     for usina_idx, usina in enumerate(st.session_state['usinas']):
         st.subheader(f"Usina {usina_idx + 1}")
         
@@ -206,7 +202,7 @@ def pagina_gerar_documento():
             {
                 "Descrição": item.get("descricao", ""),
                 "Quantidade": int(item.get("quantidade", 0)),  # Garantir que a quantidade seja um inteiro
-                "Valor": locale.currency(item.get("valor_unitario", 0.0) * item.get("quantidade", 0), grouping=True),
+                "Valor": "{:,.2f}".format(item.get("valor_unitario", 0.0) * item.get("quantidade", 0)).replace(",", "X").replace(".", ",").replace("X", "."),  # Formatação personalizada
                 "Order": item.get("order", 0),
                 "Index": item_idx  # Adiciona o índice do item para referência
             }
@@ -223,22 +219,20 @@ def pagina_gerar_documento():
         total_row = pd.DataFrame([{
             "Descrição": "Total",
             "Quantidade": "",
-            "Valor": locale.currency(total_preco_total, grouping=True),
+            "Valor": "{:,.2f}".format(total_preco_total).replace(",", "X").replace(".", ",").replace("X", "."),  # Formatação personalizada
             "Order": float('inf'),  # Garantir que a linha de total fique no final
             "Index": float('inf')
         }])
         
-        df_itens = pd.concat([df_itens, total_row], ignore_index=True)
-        
-        # Ordenar o DataFrame pelo campo 'Order'
-        df_itens = df_itens.sort_values(by="Order")
+    df_itens = pd.concat([df_itens, total_row], ignore_index=True)
+    
+    # Ordenar o DataFrame pelo campo 'Order'
+    df_itens = df_itens.sort_values(by="Order")
 
-        st.session_state['resumo_df'] = df_itens
-        
-        # Exibir a tabela sem a coluna 'Order' e 'Index'
-        st.table(df_itens.drop(columns=["Order", "Index"]))
-
-        
+    st.session_state['resumo_df'] = df_itens
+    
+    # Exibir a tabela sem a coluna 'Order' e 'Index'
+    st.table(df_itens.drop(columns=["Order", "Index"]))       
  
 
     # Verificar se todos os dados obrigatórios estão preenchidos

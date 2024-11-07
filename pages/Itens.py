@@ -3,8 +3,7 @@ import pandas as pd
 from config_db import conectar_banco
 from dotenv import load_dotenv
 from pages.Inicial import carregar_cidades
-import uuid
-import locale
+
 
 # Carregar variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -1875,9 +1874,6 @@ def excluir_item(usina_idx, item_idx):
     st.rerun()
 
 
-# Configurar o locale para o formato de moeda brasileiro
-locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-
 for usina_idx, usina in enumerate(st.session_state['usinas']):
     st.subheader(f"Usina {usina_idx + 1}")
     
@@ -1886,7 +1882,7 @@ for usina_idx, usina in enumerate(st.session_state['usinas']):
         {
             "Descrição": item.get("descricao", ""),
             "Quantidade": int(item.get("quantidade", 0)),  # Garantir que a quantidade seja um inteiro
-            "Valor": locale.currency(item.get("valor_unitario", 0.0) * item.get("quantidade", 0), grouping=True),
+            "Valor": "{:,.2f}".format(item.get("valor_unitario", 0.0) * item.get("quantidade", 0)).replace(",", "X").replace(".", ",").replace("X", "."),  # Formatação personalizada
             "Order": item.get("order", 0),
             "Index": item_idx  # Adiciona o índice do item para referência
         }
@@ -1903,7 +1899,7 @@ for usina_idx, usina in enumerate(st.session_state['usinas']):
     total_row = pd.DataFrame([{
         "Descrição": "Total",
         "Quantidade": "",
-        "Valor": locale.currency(total_preco_total, grouping=True),
+        "Valor": "{:,.2f}".format(total_preco_total).replace(",", "X").replace(".", ",").replace("X", "."),  # Formatação personalizada
         "Order": float('inf'),  # Garantir que a linha de total fique no final
         "Index": float('inf')
     }])
@@ -1921,7 +1917,7 @@ for usina_idx, usina in enumerate(st.session_state['usinas']):
 # Classificar a proposta como Estação Fotovoltaica ou Subestação Unitária
     classificar_proposta_estacao_subestacao()
 
-    st.subheader("Valor total da usina: {}".format(locale.currency(total_preco_total, grouping=True)))
+    st.subheader("Valor total da usina: {}".format("{:,.2f}".format(total_preco_total).replace(",", "X").replace(".", ",").replace("X", ".")))
     st.subheader("Escopo de fornecimento: {}".format(st.session_state['classificacao_estacao_subestacao']))
     # Linha separadora entre usinas
     st.markdown("---")
