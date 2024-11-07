@@ -75,7 +75,7 @@ def substituir_texto_paragrafos_ruins(doc):
         # Substituir {{LOCAL}} com o valor de st.session_state['dados_iniciais']['localentrega']
         if '{{LOCAL}}' in paragraph.text:
             local_value = str(st.session_state['dados_iniciais'].get('localentrega', ''))  # Pega o valor de 'localentrega'
-            new_text = local_value
+            new_text = f"{local_value} para aplicação para revenda ou industrialização."
             inline = paragraph.runs
             for run in inline:
                 if '{{LOCAL}}' in run.text:
@@ -154,7 +154,7 @@ def gerar_documento_word():
         inserir_eventos_pagamento(doc, eventos_pagamento)
 
         substituir_texto_paragrafos_ruins(doc)
-        
+
         doc.save(buffer)
 
         buffer.seek(0)
