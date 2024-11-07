@@ -92,7 +92,7 @@ def gerar_documento_word():
         '{{ICMS}}': str(st.session_state['icms']).replace('.', ',') + "%",
         '{{CONTRIBUINTE}}': st.session_state['outputcontribuinte'] ,
         '{{DOLAR}}': "$ "+str(st.session_state['dolar']) ,
-        '{{TRANSPORTE}}': ['dados_iniciais'].get('tipofrete', 'CIF') ,
+        '{{TRANSPORTE}}': st.session_state['dados_iniciais'].get('tipofrete', 'CIF') ,
         '{{DIAVALIDADE}}': str(st.session_state['dados_iniciais'].get('diasvalidade', '')),
         '{{MESESGARANTIA}}': str(st.session_state['dados_iniciais'].get('mesesgarantia', '')),
     }
