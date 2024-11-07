@@ -348,7 +348,7 @@ contribuinte = st.radio(
     index=0 if 'contribuinte' not in st.session_state else 1 if st.session_state['contribuinte'] == "Não" else 0
 )
 
-st.session_state['contribuinte']=contribuinte
+st.session_state['contriuinte']=contribuinte
 
 st.session_state['outputcontribuinte'] = "cliente contribuinte do ICMS" if st.session_state['contribuinte'] == "Sim" else "cliente não contribuinte do ICMS"
 
@@ -1882,7 +1882,7 @@ for usina_idx, usina in enumerate(st.session_state['usinas']):
         {
             "Descrição": item.get("descricao", ""),
             "Quantidade": int(item.get("quantidade", 0)),  # Garantir que a quantidade seja um inteiro
-            "Valor": "{:,.2f}".format(item.get("valor_unitario", 0.0).replace(",", "X").replace(".", ",").replace("X", ".")),  # Formatação personalizada
+            "Valor": "{:,.2f}".format(item.get("valor_unitario", 0.0)).replace(",", "X").replace(".", ",").replace("X", "."),  # Formatação personalizada
             "Order": item.get("order", 0),
             "Index": item_idx  # Adiciona o índice do item para referência
         }
@@ -1899,7 +1899,7 @@ for usina_idx, usina in enumerate(st.session_state['usinas']):
     total_row = pd.DataFrame([{
         "Descrição": "Total",
         "Quantidade": "",
-        "Valor":  "{:,.2f}".format(item.get("valor_unitario", 0.0)).replace(",", "X").replace(".", ",").replace("X", "."),  # Formatação personalizada
+        "Valor": "{:,.2f}".format(total_preco_total).replace(",", "X").replace(".", ",").replace("X", "."),  # Formatação personalizada
         "Order": float('inf'),  # Garantir que a linha de total fique no final
         "Index": float('inf')
     }])
