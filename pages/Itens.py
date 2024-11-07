@@ -341,17 +341,9 @@ def garantir_valores_inicializados():
 # Garantir que os valores dos percentuais estão inicializados
 garantir_valores_inicializados()
 
-
-contribuinte = st.radio(
-    "O cliente é contribuinte do ICMS?",
-    options=["Não","Sim"],
-    index=0 if 'contribuinte' not in st.session_state else 1 if st.session_state['contribuinte'] == "Não" else 0
-)
-
-st.session_state['contriuinte']=contribuinte
+st.session_state['contribuinte'] = st.radio("O cliente é contribuinte do ICMS?", options=["Não","Sim"],value=st.session_state['contribuinte'])
 
 st.session_state['outputcontribuinte'] = "cliente contribuinte do ICMS" if st.session_state['contribuinte'] == "Sim" else "cliente não contribuinte do ICMS"
-
 
 
 # Criar os widgets para os percentuais diretamente
