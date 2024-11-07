@@ -1882,7 +1882,7 @@ for usina_idx, usina in enumerate(st.session_state['usinas']):
         {
             "Descrição": item.get("descricao", ""),
             "Quantidade": int(item.get("quantidade", 0)),  # Garantir que a quantidade seja um inteiro
-            "Valor": "{:,.2f}".format(item.get("valor_unitario", 0.0).replace(",", "X").replace(".", ",").replace("X", "."),  # Formatação personalizada
+            "Valor": "{:,.2f}".format(item.get("valor_unitario", 0.0).replace(",", "X").replace(".", ",").replace("X", ".")),  # Formatação personalizada
             "Order": item.get("order", 0),
             "Index": item_idx  # Adiciona o índice do item para referência
         }
