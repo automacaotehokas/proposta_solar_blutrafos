@@ -1923,4 +1923,4 @@ for usina_idx, usina in enumerate(st.session_state['usinas']):
     st.markdown("---")
 
 
-st.write(st.session_state['outputcontribuinte'])
+st.write(st.session_state['usinas'])
