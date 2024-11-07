@@ -350,10 +350,9 @@ def inserir_impostos(doc, classificacao_estacao_subestacao):
     elif classificacao_estacao_subestacao == "Subestação Unitária":
         ncm_texto = "NCM: 8537.20.90 – Subestação Unitária"
         impostos = [
-                    "PIS: 1,65% inclusos nos preços;"
-                                "COFINS: 7,6% inclusos nos preços;",
-                                                f"ICMS: {st.session_state['icms']+st.session_state['difal']+st.session_state['f_pobreza']}% inclusos nos preços;",
-
+            "PIS: 1,65% inclusos nos preços;"
+            "COFINS: 7,6% inclusos nos preços;",
+            f"ICMS: {st.session_state['icms']+st.session_state['difal']+st.session_state['f_pobreza']}% inclusos nos preços;",
             "IPI: 0,00% a incluir nos preços.",
 
 
@@ -366,7 +365,7 @@ def inserir_impostos(doc, classificacao_estacao_subestacao):
     for i, paragraph in enumerate(doc.paragraphs):
         if "Impostos" in paragraph.text:
             # Encontrado o parágrafo, chamar a função de inserção de parágrafos formatados
-            inserir_paragrafo_impostos(doc, i , ncm_texto, impostos)
+            inserir_paragrafo_impostos(doc, i+1 , ncm_texto, impostos)
             break
 
 # Função para formatar e inserir o NCM e a lista de impostos no documento

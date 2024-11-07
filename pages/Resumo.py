@@ -69,6 +69,26 @@ def get_template_file():
     
     return local_template_path
 
+def substituir_texto_paragrafos_ruins(doc):
+    # Substituir texto apenas nos parágrafos
+    for paragraph in doc.paragraphs:
+        # Substituir {{LOCAL}} com o valor de st.session_state['dados_iniciais']['localentrega']
+        if '{{LOCAL}}' in paragraph.text:
+            local_value = str(st.session_state['dados_iniciais'].get('localentrega', ''))  # Pega o valor de 'localentrega'
+            new_text = local_value
+            inline = paragraph.runs
+            for run in inline:
+                if '{{LOCAL}}' in run.text:
+                    run.text = run.text.replace('{{LOCAL}}', new_text)
+
+        # Substituir {{CONTRIBUINTE}} com o valor de st.session_state['outputcontribuinte']
+        if '{{CONTRIBUINTE}}' in paragraph.text:
+            contribuinte_value = st.session_state.get('outputcontribuinte', '')
+            inline = paragraph.runs
+            for run in inline:
+                if '{{CONTRIBUINTE}}' in run.text:
+                    run.text = run.text.replace('{{CONTRIBUINTE}}', contribuinte_value)
+
 
 
 def gerar_documento_word():
@@ -88,9 +108,7 @@ def gerar_documento_word():
         '{{DIA}}': str(st.session_state['dados_iniciais'].get('dia', '')),
         '{{MES}}': str(st.session_state['dados_iniciais'].get('mes', '')),
         '{{ANO}}': str(st.session_state['dados_iniciais'].get('ano', '')),
-        '{{LOCAL}}': "str(st.session_state['dados_iniciais'].get('localentrega', ''))  para aplicação para revenda ou industrialização.",
         '{{ICMS}}': str(st.session_state['icms']).replace('.', ',') + "%",
-        '{{CONTRIBUINTE}}': st.session_state['outputcontribuinte'] ,
         '{{DOLAR}}': "$ "+str(st.session_state['dolar']) ,
         '{{TRANSPORTE}}': st.session_state['dados_iniciais'].get('tipofrete', 'CIF') ,
         '{{DIAVALIDADE}}': str(st.session_state['dados_iniciais'].get('diasvalidade', '')),
@@ -135,7 +153,8 @@ def gerar_documento_word():
         inserir_impostos(doc, classificacao_estacao_subestacao)
         inserir_eventos_pagamento(doc, eventos_pagamento)
 
-
+        substituir_texto_paragrafos_ruins(doc)
+        
         doc.save(buffer)
 
         buffer.seek(0)
