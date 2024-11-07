@@ -825,7 +825,7 @@ for i in range(st.session_state['num_usinas']):
                 descricao_item += f"- Skid Estruturado Em Aço para {potencia_escolhida} kVA;\n"
                 descricao_item += f"- Transformador Isolado a Seco {potencia_escolhida} kVA {classe_tensao};\n"
                 descricao_item += f"- Perdas = {perdas}; K={fator_k_escolhido}; IP={ip_escolhido};\n"
-                descricao_item += f"- QGBT {tensao_bt_escolhida}V {corrente_escolhida}A {kva}kA"
+                descricao_item += f"- QGBT {tensao_bt_escolhida}V {corrente_escolhida} {kva}kA"
 
                 if len(st.session_state['usinas'][i]['itens']) < num_itens:
                     st.session_state['usinas'][i]['itens'].append({
