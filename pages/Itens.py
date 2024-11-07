@@ -348,7 +348,7 @@ contribuinte = st.radio(
     index=0 if 'contribuinte' not in st.session_state else 1 if st.session_state['contribuinte'] == "Não" else 0
 )
 
-st.session_state['contriuinte']=contribuinte
+st.session_state['contribuinte']=contribuinte
 
 st.session_state['outputcontribuinte'] = "cliente contribuinte do ICMS" if st.session_state['contribuinte'] == "Sim" else "cliente não contribuinte do ICMS"
 
