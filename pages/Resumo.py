@@ -88,11 +88,11 @@ def gerar_documento_word():
         '{{DIA}}': str(st.session_state['dados_iniciais'].get('dia', '')),
         '{{MES}}': str(st.session_state['dados_iniciais'].get('mes', '')),
         '{{ANO}}': str(st.session_state['dados_iniciais'].get('ano', '')),
-        '{{LOCAL}}': str(st.session_state['dados_iniciais'].get('localentrega', '')),
+        '{{LOCAL}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}': "str(st.session_state['dados_iniciais'].get('localentrega', ''))  para aplicação para revenda ou industrialização.",
         '{{ICMS}}': str(st.session_state['icms']).replace('.', ',') + "%",
         '{{CONTRIBUINTE}}': st.session_state['outputcontribuinte'] ,
         '{{DOLAR}}': "$ "+str(st.session_state['dolar']) ,
-        '{{TRANSPORTE}}': "st.session_state['dados_iniciais'].get('tipofrete', 'CIF') para aplicação para revenda ou industrialização." ,
+        '{{TRANSPORTE}}': ['dados_iniciais'].get('tipofrete', 'CIF') ,
         '{{DIAVALIDADE}}': str(st.session_state['dados_iniciais'].get('diasvalidade', '')),
         '{{MESESGARANTIA}}': str(st.session_state['dados_iniciais'].get('mesesgarantia', '')),
     }
