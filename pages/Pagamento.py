@@ -103,12 +103,7 @@ def verificar_produtos_presentes(produtos_presentes):
         if produto not in produtos_presentes:
             del st.session_state['eventos_pagamento'][produto]
 
-# Função para classificar a proposta como QGBT/SKID
-def classificar_proposta_qgbt_skid():
-    produtos_presentes = set()
-    for usina in st.session_state.get('usinas', []):
-        for item in usina.get('itens', []):
-            produtos_presentes.add(item.get('produto'))
+
 
     # Verificar se a proposta possui QGBT ou SKID
     if "SKID" in produtos_presentes :
@@ -132,8 +127,7 @@ for usina in st.session_state.get('usinas', []):
 # Verificar se os produtos ainda estão presentes
 verificar_produtos_presentes(produtos_unicos)
 
-# Classificar a proposta como QGBT/SKID
-classificar_proposta_qgbt_skid()
+
 
 st.subheader("Configuração de Eventos de Pagamento")
 

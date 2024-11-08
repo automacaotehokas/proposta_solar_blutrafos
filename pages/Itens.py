@@ -669,7 +669,7 @@ for i in range(st.session_state['num_usinas']):
                                 (1 - (st.session_state['difal'] / 100) - (st.session_state['f_pobreza'] / 100) - (st.session_state['icms'] / 100) )
                
 
-                # Transformador a Seco
+                # Transformador a Seco P/ SKID
                 st.subheader("Configuração do Transformador a Seco")
 
                 fator_k_opcoes = [1, 4, 6, 8, 13]
@@ -693,20 +693,7 @@ for i in range(st.session_state['num_usinas']):
                 )
 
                                 # Carregar o valor do IP para transformador a seco
-                load_value(f'ip_{i}_{item_idx}')
-                ip_opcoes = ['00', '21', '23', '54']
-                if 'ip' not in st.session_state['usinas'][i]['itens'][item_idx]:
-                    st.session_state['usinas'][i]['itens'][item_idx]['ip'] = ip_opcoes[0]
-                ip_escolhido = st.selectbox(
-                    f"Selecione o IP para o item {item_idx + 1}:",
-                    ip_opcoes,
-                    index=ip_opcoes.index(st.session_state['usinas'][i]['itens'][item_idx]['ip']),
-                    key=f"_ip_{i}_{item_idx}",
-                    on_change=store_value,
-                    args=[f'ip_{item_idx}']
-                )
-                st.session_state['usinas'][i]['itens'][item_idx]['ip'] = ip_escolhido
-
+                ip_escolhido= "00"
 
                 # Armazena o Fator K selecionado no session_state com a chave consistente 'fator_k'
                 st.session_state['usinas'][i]['itens'][item_idx]['fator_k'] = fator_k_escolhido

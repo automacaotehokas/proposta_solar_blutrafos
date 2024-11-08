@@ -4,6 +4,20 @@ from datetime import datetime
 
 st.set_page_config(layout="wide")
 
+def carregar_estados():
+    if 'estados' not in st.session_state:
+        url = "https://servicodados.ibge.gov.br/api/v1/localidades/estados"
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                st.session_state['estados'] = {estado['sigla']: estado['nome'] for estado in response.json()}
+            else:
+                st.error("Erro ao buscar os estados. Por favor, tente novamente mais tarde.")
+                st.session_state['estados'] = {}
+        except Exception as e:
+            st.error(f"Erro ao conectar com a API: {e}")
+            st.session_state['estados'] = {}
+
 def carregar_cidades():
     if 'cidades' not in st.session_state:
         url = "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
@@ -20,11 +34,12 @@ def carregar_cidades():
             st.error(f"Erro ao conectar com a API: {e}")
             st.session_state['cidades'] = []
 
-
 if 'local_frete' not in st.session_state:
     st.session_state['local_frete'] = "None"
-    
+
+carregar_estados()
 carregar_cidades()
+
 # Adicionar a opção "None" à lista de cidades
 cidades_com_none = [""] + st.session_state['cidades']
 
@@ -117,6 +132,14 @@ def configurar_informacoes():
 
 
             })
+                # Extrair a sigla do estado da cidade selecionada
+    cidade_selecionada = st.session_state['dados_iniciais'].get('localentrega', '')
+    if cidade_selecionada:
+        sigla_estado = cidade_selecionada.split('/')[-1]
+        nome_estado = st.session_state['estados'].get(sigla_estado, '')
+        st.session_state['dados_iniciais']['estado_extenso'] = nome_estado
+
+ 
     
 
 # Chamada para configurar as informações na interface

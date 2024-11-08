@@ -61,6 +61,7 @@ def add_double_borders(cell):
 
 
 
+
 def create_custom_table(doc, itens_configurados, observacao):
 
 
@@ -222,21 +223,19 @@ def substituir_texto_documento(doc, replacements):
 
             for run in paragraph.runs:
                 if run.text:  # Somente atualiza o texto se houver conteúdo
-                    if run.text in full_text:  # Confere se o run faz parte do texto original
-                        run.text = texto_atualizado[:len(run.text)]  # Atualiza parte inicial do texto modificado
-                        texto_atualizado = texto_atualizado[len(run.text):]  # Remove o texto atualizado
+                    length = len(run.text)
+                    run.text = texto_atualizado[:length]  # Atualiza parte inicial do texto modificado
+                    texto_atualizado = texto_atualizado[length:]  # Remove o texto atualizado
 
                 # Preserva conteúdo não textual (e.g., imagens, quebras de linha/página)
                 if run._r.xml.find('<a:blip') != -1:  # Verifica a presença de imagem (tag <a:blip>)
                     continue  # Não faz alterações no run com imagem
 
     # Substituir texto em todos os parágrafos do documento
-
     for paragraph in doc.paragraphs:
         substituir_texto_paragrafo(paragraph, replacements)
 
     # Substituir texto em todas as tabelas do documento
-
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
@@ -244,11 +243,12 @@ def substituir_texto_documento(doc, replacements):
                     substituir_texto_paragrafo(paragraph, replacements)
 
     # Substituir texto no cabeçalho de todas as seções do documento
-
     for section in doc.sections:
         header = section.header
         for paragraph in header.paragraphs:
             substituir_texto_paragrafo(paragraph, replacements)
+
+    return doc
 
 
 def inserir_paragrafo_pagamento(doc, index):

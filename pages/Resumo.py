@@ -13,6 +13,7 @@ from replace import inserir_tabelas_word
 from replace import inserir_eventos_pagamento
 from replace import inserir_impostos
 import pandas as pd
+
   
 
 st.set_page_config(layout="wide")
@@ -73,9 +74,17 @@ def get_template_file():
         local_template_path = sp.download_file(template_name)
     
     return local_template_path
-
+# Função para classificar a proposta como QGBT/SKID
+def classificar_proposta_qgbt_skid():
+    produtos_presentes = set()
+    for usina in st.session_state.get('usinas', []):
+        for item in usina.get('itens', []):
+            produtos_presentes.add(item.get('produto'))
 
 def gerar_documento_word():
+    # Classificar a proposta como QGBT/SKID
+    classificar_proposta_qgbt_skid()
+
     st.write("Iniciando a geração do documento Word...")
 
     template_path = get_template_file()
@@ -97,8 +106,9 @@ def gerar_documento_word():
         '{{TRANSPORTE}}': st.session_state['dados_iniciais'].get('tipofrete', 'CIF') ,
         '{{DIAVALIDADE}}': str(st.session_state['dados_iniciais'].get('diasvalidade', '')),
         '{{MESESGARANTIA}}': str(st.session_state['dados_iniciais'].get('mesesgarantia', '')),
-        '{{LOCAL}}':f" Os preços apresentados consideram faturamento a {st.session_state['outputcontribuinte']} do estado de {st.session_state['dados_iniciais'].get('localentrega', '')} para aplicação industrialização." 
-
+        '{{ESTADO}}':st.session_state['dados_iniciais']['estado_extenso'],
+        '{{CONTRIBUINTE}}': st.session_state['outputcontribuinte'],
+        '{{ind}}': "industrialização"
     }
 
 
@@ -145,6 +155,7 @@ def gerar_documento_word():
         inserir_eventos_pagamento(doc, eventos_pagamento)
 
 
+
         doc.save(buffer)
 
         buffer.seek(0)
@@ -179,9 +190,6 @@ def pagina_gerar_documento():
     st.write(f"**Comissão:** {st.session_state['comissao']:.2f}%")
     st.write(f"**Difal:** {st.session_state['difal']:.2f}%")
     st.write(f"**F.pobreza:** {st.session_state['f_pobreza']:.2f}%")
-
-    
-
 
     # Adicionar informação de percentual considerado para cada item
     itens_configurados = st.session_state.get('itens_configurados', [])
