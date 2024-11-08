@@ -143,7 +143,7 @@ def create_custom_table(doc, itens_configurados, observacao):
             valor_total_cell = valor_total_cell.merge(row.cells[3])  # Mescla as células subsequentes
 
         # Definir o valor total na célula mesclada
-        total = sum(item['valor_total'] for item in itens_configurados)
+        total = sum(item['valor_unitario'] for item in itens_configurados)
         valor_total_cell.text = f"R$ {total:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
         apply_paragraph_formatting(valor_total_cell.paragraphs[0], alignment='center')
         set_vertical_alignment(valor_total_cell, 'center')
@@ -162,7 +162,7 @@ def create_custom_table(doc, itens_configurados, observacao):
     # Linha do total (última linha da tabela)
     total_row = table.rows[-1]
     total_row.cells[0].merge(total_row.cells[3])  # Mescla as células até "Descrição"
-    total_row.cells[3].text = f"Total (s/IPI): R$ {sum(item['valor_total'] for item in itens_configurados):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    total_row.cells[3].text = f"Total (s/IPI): R$ {sum(item['valor_unitario'] for item in itens_configurados):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
     # Definir altura da linha de total
     set_row_height(total_row, 1.1)
@@ -203,9 +203,9 @@ def set_table_left_indent(table, indent):
         tbl_indent_element.set(qn('w:type'), 'dxa')
         tbl_pr.append(tbl_indent_element)
 
+
 # Função para substituir texto no documento, incluindo tabelas e cabeçalhos
 def substituir_texto_documento(doc, replacements):
-
 
     # Função para substituir texto em runs unidos de um parágrafo, preservando elementos não textuais
     def substituir_texto_paragrafo(paragraph, replacements):

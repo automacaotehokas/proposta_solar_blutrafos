@@ -45,6 +45,11 @@ def verificar_dados_completos():
 
     return True
 
+def substituir_local(doc):
+    local_entrega = st.session_state['dados_iniciais'].get('localentrega', '')
+    documento = documento.replace('{{LOCAL}}', local_entrega)
+    return documento
+
 # Função para baixar o template uma vez e reutilizá-lo
 def get_template_file():
     # Verificar a classificação no session_state
@@ -69,27 +74,6 @@ def get_template_file():
     
     return local_template_path
 
-def substituir_texto_paragrafos_ruins(doc):
-    # Substituir texto apenas nos parágrafos
-    for paragraph in doc.paragraphs:
-        # Substituir {{LOCAL}} com o valor de st.session_state['dados_iniciais']['localentrega']
-        if '{{LOCAL}}' in paragraph.text:
-            local_value = str(st.session_state['dados_iniciais'].get('localentrega', ''))  # Pega o valor de 'localentrega'
-            new_text = f"{local_value} para aplicação para revenda ou industrialização."
-            inline = paragraph.runs
-            for run in inline:
-                if '{{LOCAL}}' in run.text:
-                    run.text = run.text.replace('{{LOCAL}}', new_text)
-
-        # Substituir {{CONTRIBUINTE}} com o valor de st.session_state['outputcontribuinte']
-        if '{{CONTRIBUINTE}}' in paragraph.text:
-            contribuinte_value = st.session_state.get('outputcontribuinte', '')
-            inline = paragraph.runs
-            for run in inline:
-                if '{{CONTRIBUINTE}}' in run.text:
-                    run.text = run.text.replace('{{CONTRIBUINTE}}', contribuinte_value)
-
-
 
 def gerar_documento_word():
     st.write("Iniciando a geração do documento Word...")
@@ -99,7 +83,7 @@ def gerar_documento_word():
 
     output_filename = f" Blutrafos - OR's 12.{st.session_state['dados_iniciais']['bt']}-24-C-REV{st.session_state['dados_iniciais']['rev']}.docx"
     st.write(f"Output filename: {output_filename}")
-    
+
     replacements = {
         '{{OR}}': (st.session_state['dados_iniciais'].get('bt', '')),
         '{{CLIENTE}}': str(st.session_state['dados_iniciais'].get('cliente', '')),
@@ -113,10 +97,17 @@ def gerar_documento_word():
         '{{TRANSPORTE}}': st.session_state['dados_iniciais'].get('tipofrete', 'CIF') ,
         '{{DIAVALIDADE}}': str(st.session_state['dados_iniciais'].get('diasvalidade', '')),
         '{{MESESGARANTIA}}': str(st.session_state['dados_iniciais'].get('mesesgarantia', '')),
+        '{{LOCAL}}':f" Os preços apresentados consideram faturamento a {st.session_state['outputcontribuinte']} do estado de {st.session_state['dados_iniciais'].get('localentrega', '')} para aplicação industrialização." 
+
     }
 
 
+
+
+
     usinas = st.session_state.get('usinas', [])
+
+
 
 
     itens_configurados = []
@@ -153,7 +144,6 @@ def gerar_documento_word():
         inserir_impostos(doc, classificacao_estacao_subestacao)
         inserir_eventos_pagamento(doc, eventos_pagamento)
 
-        substituir_texto_paragrafos_ruins(doc)
 
         doc.save(buffer)
 
@@ -207,12 +197,10 @@ def pagina_gerar_documento():
 
     st.write("---")
 
-    
-
-
 
     # Mostrando os itens configurados
     st.subheader("Itens Configurados")
+    
     for usina_idx, usina in enumerate(st.session_state['usinas']):
         st.subheader(f"Usina {usina_idx + 1}")
         
@@ -221,7 +209,7 @@ def pagina_gerar_documento():
             {
                 "Descrição": item.get("descricao", ""),
                 "Quantidade": int(item.get("quantidade", 0)),  # Garantir que a quantidade seja um inteiro
-                "Valor": "{:,.2f}".format(item.get("valor_unitario", 0.0) * item.get("quantidade", 0)).replace(",", "X").replace(".", ",").replace("X", "."),  # Formatação personalizada
+                "Valor": "{:,.2f}".format(item.get("valor_unitario", 0.0)).replace(",", "X").replace(".", ",").replace("X", "."),  # Formatação personalizada
                 "Order": item.get("order", 0),
                 "Index": item_idx  # Adiciona o índice do item para referência
             }
@@ -232,7 +220,7 @@ def pagina_gerar_documento():
         df_itens = pd.DataFrame(itens_data)
         
         # Calcular o total dos valores
-        total_preco_total = sum(item.get("valor_unitario", 0.0) * item.get("quantidade", 0) for item in usina['itens'])
+        total_preco_total = sum(item.get("valor_unitario", 0.0) for item in usina['itens'])
         
         # Adicionar uma linha de total ao DataFrame
         total_row = pd.DataFrame([{
@@ -243,15 +231,20 @@ def pagina_gerar_documento():
             "Index": float('inf')
         }])
         
-    df_itens = pd.concat([df_itens, total_row], ignore_index=True)
-    
-    # Ordenar o DataFrame pelo campo 'Order'
-    df_itens = df_itens.sort_values(by="Order")
+        df_itens = pd.concat([df_itens, total_row], ignore_index=True)
+        
+        # Ordenar o DataFrame pelo campo 'Order'
+        df_itens = df_itens.sort_values(by="Order")
 
-    st.session_state['resumo_df'] = df_itens
-    
-    # Exibir a tabela sem a coluna 'Order' e 'Index'
-    st.table(df_itens.drop(columns=["Order", "Index"]))       
+        st.session_state['resumo_df'] = df_itens
+        
+        # Exibir a tabela sem a coluna 'Order' e 'Index'
+        st.table(df_itens.drop(columns=["Order", "Index"]))
+        st.subheader("Valor total da usina: {}".format("{:,.2f}".format(total_preco_total).replace(",", "X").replace(".", ",").replace("X", ".")))
+        st.subheader("Escopo de fornecimento: {}".format(st.session_state['classificacao_estacao_subestacao']))
+        # Linha separadora entre usinas
+        st.markdown("---")
+   
  
 
     # Verificar se todos os dados obrigatórios estão preenchidos

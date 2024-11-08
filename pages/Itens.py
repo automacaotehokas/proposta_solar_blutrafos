@@ -653,6 +653,8 @@ for i in range(st.session_state['num_usinas']):
                     options=["Não", "Sim"], 
                     key=f"automacao_{i}_{item_idx}"
                 )
+
+                st.write(percentuais)
                 preco_base2 = obter_preco_solar(
                     df=df_solar, 
                     produto=item_selecionado, 
@@ -661,10 +663,12 @@ for i in range(st.session_state['num_usinas']):
                     configuracao_mt=configuracao_mt_escolhida, 
                     configuracao_bt=configuracao_bt_escolhida, 
                     corrente=corrente_escolhida
-                )
-
-                preco_unitario_2 = preco_base2 / (1 - percentuais)
+                ) 
+                preco_com_percentuais= preco_base2/(1-percentuais)
+                preco_unitario_2 = int((preco_com_percentuais) * (1 - 0.12)) / \
+                                (1 - (st.session_state['difal'] / 100) - (st.session_state['f_pobreza'] / 100) - (st.session_state['icms'] / 100) )
                
+
                 # Transformador a Seco
                 st.subheader("Configuração do Transformador a Seco")
 
@@ -982,8 +986,11 @@ for i in range(st.session_state['num_usinas']):
                 configuracao_bt=configuracao_bt_escolhida, 
                 corrente=corrente_escolhida
             )
-                preco_unitario_2= (preco_base2 / (1 - percentuais)) 
-
+                
+                preco_com_percentuais= preco_base2/(1-percentuais)
+                preco_unitario_2 = int((preco_com_percentuais) * (1 - 0.12)) / \
+                                (1 - (st.session_state['difal'] / 100) - (st.session_state['f_pobreza'] / 100) - (st.session_state['icms'] / 100) )
+               
 
                 if automacao_selecionada == "Sim":
                     preco_unitario_2 += 13874.41
@@ -1889,7 +1896,7 @@ for usina_idx, usina in enumerate(st.session_state['usinas']):
     df_itens = pd.DataFrame(itens_data)
     
     # Calcular o total dos valores
-    total_preco_total = sum(item.get("valor_unitario", 0.0) * item.get("quantidade", 0) for item in usina['itens'])
+    total_preco_total = sum(item.get("valor_unitario", 0.0) for item in usina['itens'])
     
     # Adicionar uma linha de total ao DataFrame
     total_row = pd.DataFrame([{
